@@ -20,6 +20,9 @@
   --font-body: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
 }
 
+/* Base and component styles live in layers so Tailwind utilities (e.g. no-underline,
+   text-*) can override them — unlayered CSS would beat every utility. */
+@layer base {
 html {
   background: var(--color-night);
   color: var(--color-parchment);
@@ -64,6 +67,9 @@ a:hover { color: var(--color-gilt-bright); }
   outline-offset: 2px;
 }
 
+}
+
+@layer components {
 .eyebrow {
   font-size: 0.72rem;
   letter-spacing: 0.25em;
@@ -148,3 +154,4 @@ a:hover { color: var(--color-gilt-bright); }
 }
 
 .field::placeholder { color: var(--color-parchment-dim); opacity: 0.6; }
+}
