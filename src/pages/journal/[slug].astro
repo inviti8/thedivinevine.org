@@ -1,0 +1,25 @@
+---
+import Base from '~/layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('journal', (e) => !e.data.draft);
+  return entries.map((e) => ({ params: { slug: e.id }, props: { entry: e } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const date = d.publishedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+
+<Base title={d.title} description={d.excerpt}>
+  <article class="prose-vine mx-auto max-w-2xl px-4 py-16 sm:px-6">
+    <p class="eyebrow text-center">{date} · {d.author}</p>
+    <h1 class="mt-2 text-center">{d.title}</h1>
+    <hr class="rule" />
+    <Content />
+    <hr class="rule" />
+    <p class="text-center"><a href="/journal" class="eyebrow">← All entries</a></p>
+  </article>
+</Base>

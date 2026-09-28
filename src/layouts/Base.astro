@@ -1,0 +1,53 @@
+---
+import '~/styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Nav from '~/components/Nav.astro';
+import Footer from '~/components/Footer.astro';
+import CartDrawer from '~/components/CartDrawer.svelte';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'The Divine Vine — small-batch herbal teas, tinctures and salves, plus one-on-one herbal consultations.',
+  ogImage = '/og/default.jpg',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} · The Divine Vine</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0d0a10" />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Client-side navigation so persistent islands (cart, art layer) survive page changes. -->
+    <ClientRouter />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <Nav />
+    <CartDrawer client:load transition:persist="cart-drawer" />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

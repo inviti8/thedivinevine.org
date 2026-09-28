@@ -1,0 +1,29 @@
+---
+import Base from '~/layouts/Base.astro';
+import ProductCard from '~/components/ProductCard.astro';
+import { getCollection } from 'astro:content';
+
+const products = await getCollection('products', (p) => p.data.inStock);
+const categories = (await getCollection('categories')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title="Shop">
+  <section class="mx-auto max-w-6xl px-4 pt-16 pb-8 text-center sm:px-6">
+    <p class="eyebrow">The Apothecary</p>
+    <h1 class="mt-2">All Remedies</h1>
+    <ul class="mt-8 flex flex-wrap justify-center gap-3">
+      <li><a href="/shop" class="btn btn-primary" aria-current="page">All</a></li>
+      {categories.map((c) => (
+        <li><a href={`/shop/category/${c.id}`} class="btn">{c.data.name}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+    <div class="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+      {products.map((p) => (
+        <ProductCard slug={p.id} name={p.data.name} size={p.data.size} priceUsd={p.data.priceUsd} primaryImage={p.data.primaryImage} />
+      ))}
+    </div>
+  </section>
+</Base>

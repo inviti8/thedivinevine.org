@@ -1,0 +1,94 @@
+---
+const links = [
+  { href: '/shop', label: 'Shop' },
+  { href: '/booking', label: 'Booking' },
+  { href: '/journal', label: 'Journal' },
+  { href: '/about', label: 'About' },
+  { href: '/faq', label: 'FAQ' },
+];
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="sticky top-0 z-40 border-b border-gilt/25 bg-night/85 backdrop-blur-sm">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+    <a href="/" class="font-display text-2xl tracking-wide text-parchment no-underline">
+      The Divine <span class="text-gilt">Vine</span>
+    </a>
+
+    <ul class="hidden items-center gap-8 md:flex">
+      {links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+            class="text-xs uppercase tracking-[0.2em] no-underline text-parchment-dim hover:text-gilt aria-[current=page]:text-gilt"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="flex items-center gap-2">
+      <button
+        id="cart-toggle"
+        class="border border-gilt px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors hover:bg-plum"
+        aria-label="Open cart"
+      >
+        Cart <span id="cart-count" class="ml-1 text-gilt">(0)</span>
+      </button>
+      <button
+        id="menu-toggle"
+        class="border border-gilt/60 px-3 py-2 text-xs uppercase tracking-[0.2em] md:hidden"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        Menu
+      </button>
+    </div>
+  </nav>
+
+  <ul id="mobile-menu" class="hidden border-t border-gilt/20 px-4 pb-4 md:hidden">
+    {links.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+          class="block border-b border-gilt/10 py-3 text-sm uppercase tracking-[0.2em] no-underline text-parchment hover:text-gilt aria-[current=page]:text-gilt"
+        >
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</header>
+
+<script>
+  import { cart } from '~/lib/cart';
+
+  const renderCount = () => {
+    const el = document.getElementById('cart-count');
+    const total = cart.get().reduce((sum, item) => sum + item.quantity, 0);
+    if (el) el.textContent = `(${total})`;
+  };
+
+  // Module scripts run once; with the ClientRouter the header is re-rendered on
+  // every navigation, so (re)bind on astro:page-load.
+  cart.subscribe(renderCount);
+  document.addEventListener('astro:page-load', () => {
+    renderCount();
+
+    document.getElementById('cart-toggle')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('cart:open'));
+    });
+
+    const menuBtn = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
+    menuBtn?.addEventListener('click', () => {
+      const open = menu?.classList.toggle('hidden') === false;
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+  });
+</script>

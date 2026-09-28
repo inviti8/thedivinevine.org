@@ -1,0 +1,70 @@
+---
+import Base from '~/layouts/Base.astro';
+import ProductCard from '~/components/ProductCard.astro';
+import { getCollection } from 'astro:content';
+import { booking, formatUsd } from '~/lib/site-config';
+
+const featured = (await getCollection('products', (p) => p.data.inStock && p.data.featured)).slice(0, 4);
+const categories = (await getCollection('categories')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title="Herbal Teas, Tinctures & Salves">
+  <section class="mx-auto max-w-6xl px-4 pt-20 pb-24 text-center sm:px-6" data-art-anchor="hero">
+    <p class="eyebrow">Small-batch herbal remedies</p>
+    <h1 class="mt-4 text-5xl md:text-7xl">The Divine <span class="text-gilt">Vine</span></h1>
+    <p class="mx-auto mt-6 max-w-2xl text-lg text-parchment-dim italic">
+      Hand-blended teas, slow-steeped tinctures and botanical salves, plus one-on-one consultations to help
+      you find what suits you.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-4">
+      <a href="/shop" class="btn btn-primary">Shop remedies</a>
+      <a href="/booking" class="btn">Book a consultation</a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <div class="flex items-baseline justify-between gap-4">
+      <h2>Featured</h2>
+      <a href="/shop" class="eyebrow">View all →</a>
+    </div>
+    <hr class="rule" />
+    <div class="mt-8 grid grid-cols-2 gap-6 md:grid-cols-4">
+      {featured.map((p) => (
+        <ProductCard slug={p.id} name={p.data.name} size={p.data.size} priceUsd={p.data.priceUsd} primaryImage={p.data.primaryImage} />
+      ))}
+    </div>
+    <ul class="mt-12 flex flex-wrap justify-center gap-3">
+      {categories.map((c) => (
+        <li><a href={`/shop/category/${c.id}`} class="btn">{c.data.name}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-4 py-20 sm:px-6">
+    <div class="parchment text-center">
+      <p class="eyebrow">Consultations</p>
+      <h2 class="mt-2">Find the right herbs for you</h2>
+      <p class="mt-4">
+        Book a one-on-one session to talk through your goals and routines, or start with a short free consult.
+      </p>
+      <ul class="mt-6 space-y-1 text-sm">
+        {booking.types.map((t) => (
+          <li>
+            <strong>{t.name}</strong> — {t.durationMin} min · {t.mode === 'paid' ? formatUsd(t.priceUsd) : 'Free'}
+          </li>
+        ))}
+      </ul>
+      <a href="/booking" class="btn btn-primary mt-8">Book now</a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6">
+    <p class="eyebrow">Our story</p>
+    <p class="mt-4 font-display text-2xl leading-relaxed italic">
+      "Every remedy starts in the garden — picked, dried and blended by hand."
+    </p>
+    <a href="/about" class="eyebrow mt-6 inline-block">Read more →</a>
+  </section>
+
+  <!-- Newsletter signup lands here in phase 5 (DESIGN.md §8). -->
+</Base>

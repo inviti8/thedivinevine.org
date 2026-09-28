@@ -1,0 +1,36 @@
+---
+import TextPage from '~/layouts/TextPage.astro';
+import { shop, booking, formatUsd } from '~/lib/site-config';
+
+const standard = shop.shippingOptions.find((o) => o.freeOverThreshold) ?? shop.shippingOptions[0];
+
+const faqs = [
+  {
+    q: 'Where do you ship?',
+    a: `Within the United States only, for now. Standard shipping is ${formatUsd(standard.amountUsd)}, and free on orders of ${formatUsd(shop.freeShippingThresholdUsd)} or more.`,
+  },
+  {
+    q: 'How are consultations held?',
+    a: `By video. ${booking.meeting.note} You'll receive the link in your confirmation email.`,
+  },
+  {
+    q: 'Can herbs replace my medication or medical care?',
+    a: 'No. Our products and consultations are educational and are not a substitute for professional medical advice. Always talk to your healthcare provider, especially if you are pregnant, nursing, or taking medication.',
+  },
+  {
+    q: 'How should I store my remedies?',
+    a: 'Keep teas and salves in a cool, dry place away from direct sunlight. Tinctures keep best tightly capped and out of the heat.',
+  },
+];
+---
+
+<TextPage title="FAQ" eyebrow="Questions" placeholder>
+  <dl class="space-y-6">
+    {faqs.map((f) => (
+      <div>
+        <dt class="font-display text-xl text-plum">{f.q}</dt>
+        <dd class="mt-1">{f.a}</dd>
+      </div>
+    ))}
+  </dl>
+</TextPage>

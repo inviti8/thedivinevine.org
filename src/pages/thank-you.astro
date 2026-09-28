@@ -1,0 +1,24 @@
+---
+import Base from '~/layouts/Base.astro';
+---
+
+<Base title="Thank You">
+  <section class="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
+    <p class="eyebrow">Order received</p>
+    <h1 class="mt-2">Thank you!</h1>
+    <hr class="rule" />
+    <!-- Phase 3: verify session_id via /api/order and show the order summary (DESIGN.md §6). -->
+    <p class="text-lg text-parchment-dim italic">
+      A confirmation is on its way to your inbox. Your remedies will ship within three business days.
+    </p>
+    <a href="/shop" class="btn mt-8">Continue shopping</a>
+  </section>
+</Base>
+
+<script>
+  import { clearCart } from '~/lib/cart';
+
+  document.addEventListener('astro:page-load', () => {
+    if (location.pathname.startsWith('/thank-you')) clearCart();
+  });
+</script>

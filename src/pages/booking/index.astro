@@ -1,0 +1,40 @@
+---
+import Base from '~/layouts/Base.astro';
+import { booking, formatUsd } from '~/lib/site-config';
+---
+
+<Base title="Booking" description="Book a one-on-one herbal consultation or a free introductory consult.">
+  <section class="mx-auto max-w-4xl px-4 pt-16 pb-8 text-center sm:px-6" data-art-anchor="booking">
+    <p class="eyebrow">Consultations</p>
+    <h1 class="mt-2">Booking</h1>
+    <p class="mx-auto mt-4 max-w-2xl text-parchment-dim italic">
+      Sessions are one-on-one and held by video. All times are shown in your local timezone.
+    </p>
+  </section>
+
+  <section class="mx-auto grid max-w-4xl grid-cols-1 gap-8 px-4 pb-16 sm:px-6 md:grid-cols-2">
+    {booking.types.map((t) => (
+      <article class="parchment flex flex-col">
+        <p class="eyebrow">{t.durationMin} minutes</p>
+        <h2 class="mt-2">{t.name}</h2>
+        <p class="price mt-2">{t.mode === 'paid' ? formatUsd(t.priceUsd) : 'Free'}</p>
+        <p class="mt-4 flex-1">{t.description}</p>
+        <p class="mt-4 text-sm italic">
+          {t.mode === 'paid' ? 'Reserved and paid online.' : 'Requests are confirmed by email.'}
+        </p>
+      </article>
+    ))}
+  </section>
+
+  <!-- Calendar + slot picker island mounts here in phase 4 (DESIGN.md §7). -->
+  <section class="mx-auto max-w-2xl px-4 pb-24 text-center sm:px-6">
+    <hr class="rule" />
+    <p class="text-parchment-dim">
+      Online scheduling is opening soon. In the meantime, email
+      <a href="mailto:bookings@thedivinevine.org">bookings@thedivinevine.org</a> to arrange a session.
+    </p>
+    <p class="mt-6 text-xs text-parchment-dim italic">
+      Consultations are educational and are not a substitute for medical advice, diagnosis or treatment.
+    </p>
+  </section>
+</Base>

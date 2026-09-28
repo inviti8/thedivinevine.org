@@ -1,0 +1,24 @@
+---
+// Shared shell for info and policy pages: title block plus a readable parchment panel.
+import Base from '~/layouts/Base.astro';
+
+interface Props {
+  title: string;
+  eyebrow?: string;
+  description?: string;
+  placeholder?: boolean;
+}
+
+const { title, eyebrow, description, placeholder = false } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    {eyebrow && <p class="eyebrow text-center">{eyebrow}</p>}
+    <h1 class="mt-2 text-center">{title}</h1>
+    <div class="parchment prose-vine mt-10">
+      {placeholder && <p class="text-sm font-bold">Placeholder — replace before launch.</p>}
+      <slot />
+    </div>
+  </section>
+</Base>

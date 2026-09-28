@@ -1,0 +1,84 @@
+---
+import Base from '~/layouts/Base.astro';
+import HealthDisclaimer from '~/components/HealthDisclaimer.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+import { formatUsd } from '~/lib/site-config';
+
+export async function getStaticPaths() {
+  const products = await getCollection('products');
+  return products.map((p) => ({ params: { slug: p.id }, props: { product: p } }));
+}
+
+const { product } = Astro.props;
+const { Content } = await render(product);
+const d = product.data;
+const category = await getEntry(d.category);
+---
+
+<Base title={d.name} description={`${d.name} — ${d.size}. ${d.ingredients.join(', ')}.`}>
+  <article class="mx-auto grid max-w-5xl grid-cols-1 gap-12 px-4 pt-16 pb-24 sm:px-6 md:grid-cols-2">
+    <div>
+      <img src={d.primaryImage} alt={d.name} class="w-full border border-gilt/30" />
+      {d.gallery.length > 0 && (
+        <div class="mt-4 grid grid-cols-4 gap-2">
+          {d.gallery.map((img) => (
+            <img src={img} alt="" class="aspect-square border border-gilt/20 object-cover" />
+          ))}
+        </div>
+      )}
+    </div>
+
+    <div>
+      <a href={`/shop/category/${category.id}`} class="eyebrow no-underline">{category.data.name}</a>
+      <h1 class="mt-2">{d.name}</h1>
+      <p class="mt-1 text-parchment-dim">{d.size}</p>
+      <p class="price mt-4">{formatUsd(d.priceUsd)}</p>
+
+      <div class="prose-vine mt-6"><Content /></div>
+
+      <button
+        id="add-to-cart"
+        data-slug={product.id}
+        data-name={d.name}
+        data-price={d.priceUsd}
+        data-image={d.primaryImage}
+        class="btn btn-primary mt-6 w-full md:w-auto"
+        disabled={!d.inStock}
+      >
+        {d.inStock ? 'Add to basket' : 'Currently unavailable'}
+      </button>
+
+      <dl class="mt-10 space-y-5 border-t border-gilt/30 pt-6 text-sm">
+        <div>
+          <dt class="eyebrow">Ingredients</dt>
+          <dd class="mt-1">{d.ingredients.join(', ')}</dd>
+          {d.botanicalNames.length > 0 && <dd class="mt-1 text-parchment-dim italic">{d.botanicalNames.join(', ')}</dd>}
+        </div>
+        <div>
+          <dt class="eyebrow">How to use</dt>
+          <dd class="mt-1">{d.usage}</dd>
+        </div>
+        <div>
+          <dt class="eyebrow">Cautions</dt>
+          <dd class="mt-1">
+            <ul class="list-disc space-y-1 pl-5">{d.cautions.map((c) => <li>{c}</li>)}</ul>
+          </dd>
+        </div>
+      </dl>
+
+      <HealthDisclaimer class="mt-8" />
+    </div>
+  </article>
+</Base>
+
+<script>
+  import { addToCart } from '~/lib/cart';
+
+  document.addEventListener('astro:page-load', () => {
+    const btn = document.getElementById('add-to-cart');
+    btn?.addEventListener('click', () => {
+      const d = btn.dataset;
+      addToCart({ slug: d.slug!, name: d.name!, priceUsd: parseFloat(d.price!), image: d.image! });
+    });
+  });
+</script>

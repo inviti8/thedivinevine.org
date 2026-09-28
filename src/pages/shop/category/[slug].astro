@@ -1,0 +1,43 @@
+---
+import Base from '~/layouts/Base.astro';
+import ProductCard from '~/components/ProductCard.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const categories = await getCollection('categories');
+  return categories.map((c) => ({ params: { slug: c.id }, props: { category: c } }));
+}
+
+const { category } = Astro.props;
+const { Content } = await render(category);
+const products = await getCollection('products', (p) => p.data.category.id === category.id && p.data.inStock);
+const categories = (await getCollection('categories')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title={category.data.name} description={category.data.description}>
+  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="eyebrow">Shop</p>
+      <h1 class="mt-2">{category.data.name}</h1>
+      <div class="prose-vine mt-4 text-parchment-dim italic"><Content /></div>
+      <ul class="mt-8 flex flex-wrap justify-center gap-3">
+        <li><a href="/shop" class="btn">All</a></li>
+        {categories.map((c) => (
+          <li>
+            <a href={`/shop/category/${c.id}`} class:list={['btn', { 'btn-primary': c.id === category.id }]}>{c.data.name}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <hr class="rule" />
+    {products.length === 0 ? (
+      <p class="text-center text-parchment-dim italic">New {category.data.name.toLowerCase()} are on the way.</p>
+    ) : (
+      <div class="mt-12 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+        {products.map((p) => (
+          <ProductCard slug={p.id} name={p.data.name} size={p.data.size} priceUsd={p.data.priceUsd} primaryImage={p.data.primaryImage} />
+        ))}
+      </div>
+    )}
+  </section>
+</Base>

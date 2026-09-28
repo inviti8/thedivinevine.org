@@ -1,0 +1,38 @@
+{
+  "timezone": "America/Los_Angeles",
+  "weeklyHours": {
+    "tue": [["10:00", "16:00"]],
+    "wed": [["10:00", "16:00"]],
+    "thu": [["10:00", "16:00"]],
+    "fri": [["10:00", "16:00"]],
+    "sat": [["10:00", "14:00"]]
+  },
+  "slotIntervalMin": 30,
+  "bufferMin": 15,
+  "minNoticeHours": 24,
+  "horizonDays": 60,
+  "holdMinutes": 15,
+  "meeting": {
+    "format": "video",
+    "url": "",
+    "note": "Sessions are held over FaceTime video. The link works in any browser, including Android and Windows."
+  },
+  "types": [
+    {
+      "slug": "booking",
+      "name": "Schedule a Booking",
+      "mode": "paid",
+      "durationMin": 60,
+      "priceUsd": 75,
+      "description": "A full one-on-one herbal consultation. We'll talk through your goals, routines and preferences, and you'll leave with personalized suggestions."
+    },
+    {
+      "slug": "free-consult",
+      "name": "Free Consult",
+      "mode": "request",
+      "durationMin": 20,
+      "priceUsd": 0,
+      "description": "A short introductory call to see whether a full consultation is right for you. Requests are confirmed by email."
+    }
+  ]
+}

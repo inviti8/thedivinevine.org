@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" role="img" aria-label="Product image coming soon">
+  <rect width="300" height="400" fill="#1c1020"/>
+  <g fill="none" stroke="#c9a24b" stroke-width="2">
+    <path d="M115 110h70v18c0 6 30 20 30 60v140c0 12-8 20-20 20h-90c-12 0-20-8-20-20V188c0-40 30-54 30-60z"/>
+    <rect x="110" y="92" width="80" height="18" rx="3"/>
+    <rect x="102" y="220" width="96" height="70" fill="#efe3c6" fill-opacity="0.08"/>
+  </g>
+  <path d="M60 360c30-40 50-60 60-110M120 250c-10-20-30-25-45-22M110 290c14-6 28-2 36 8" fill="none" stroke="#8c9a72" stroke-width="2"/>
+  <path d="M232 70a18 18 0 1 0 14 30 22 22 0 1 1-14-30z" fill="#c9a24b"/>
+  <g fill="#e6cc80"><circle cx="60" cy="60" r="2"/><circle cx="250" cy="170" r="1.5"/><circle cx="40" cy="200" r="1.5"/><circle cx="260" cy="320" r="2"/></g>
+  <text x="150" y="262" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#c9a24b" letter-spacing="2">IMAGE</text>
+  <text x="150" y="280" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#c294b4" letter-spacing="2">COMING SOON</text>
+</svg>

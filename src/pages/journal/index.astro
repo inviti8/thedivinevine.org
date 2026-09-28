@@ -1,0 +1,29 @@
+---
+import Base from '~/layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('journal', (e) => !e.data.draft)).sort(
+  (a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf()
+);
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+
+<Base title="Journal">
+  <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <p class="eyebrow text-center">Notes from the garden</p>
+    <h1 class="mt-2 text-center">The Journal</h1>
+    <hr class="rule" />
+    <ul class="space-y-10">
+      {entries.map((e) => (
+        <li>
+          <p class="eyebrow">{fmt(e.data.publishedDate)}</p>
+          <a href={`/journal/${e.id}`} class="no-underline">
+            <h2 class="mt-1 text-parchment transition-colors hover:text-gilt">{e.data.title}</h2>
+          </a>
+          <p class="mt-2 text-parchment-dim italic">{e.data.excerpt}</p>
+          <a href={`/journal/${e.id}`} class="eyebrow mt-3 inline-block">Read on →</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>

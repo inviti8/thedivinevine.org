@@ -1,0 +1,13 @@
+---
+// FDA/DSHEA disclaimer — required wherever structure/function statements appear (DESIGN.md §9).
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<p class:list={['text-xs italic text-parchment-dim', className]}>
+  These statements have not been evaluated by the Food and Drug Administration. This product is not intended to
+  diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before use, especially if you are
+  pregnant, nursing, or taking medication. <a href="/legal/health-disclaimer">Learn more</a>.
+</p>

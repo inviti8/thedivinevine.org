@@ -1,0 +1,23 @@
+---
+import TextPage from '~/layouts/TextPage.astro';
+import { shop, formatUsd } from '~/lib/site-config';
+---
+
+<TextPage title="Shipping & Returns" eyebrow="Policies" placeholder>
+  <h2>Shipping</h2>
+  <p>We currently ship within the United States only. Orders ship within 3 business days.</p>
+  <ul>
+    {shop.shippingOptions.map((o) => (
+      <li>
+        {o.name}: {formatUsd(o.amountUsd)} ({o.minDays}–{o.maxDays} business days)
+        {o.freeOverThreshold && <> — free on orders of {formatUsd(shop.freeShippingThresholdUsd)} or more</>}
+      </li>
+    ))}
+  </ul>
+  <h2>Returns</h2>
+  <p>
+    For health and safety reasons, opened consumable products can't be returned. If your order arrives damaged or
+    incorrect, email <a href="mailto:orders@thedivinevine.org">orders@thedivinevine.org</a> within 14 days and we'll
+    make it right.
+  </p>
+</TextPage>

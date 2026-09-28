@@ -1,0 +1,9 @@
+# Cloudflare Pages configuration.
+#
+# nodejs_compat is REQUIRED once the Stripe SDK is used by src/pages/api/*.ts:
+# it pulls in Node built-ins the Workers runtime does not expose by default.
+# Set the same flag in the Pages dashboard (Settings → Functions).
+name = "thedivinevine"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"

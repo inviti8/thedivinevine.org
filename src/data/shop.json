@@ -1,0 +1,23 @@
+{
+  "allowedCountries": ["US"],
+  "maxQuantityPerItem": 10,
+  "freeShippingThresholdUsd": 50,
+  "shippingOptions": [
+    {
+      "id": "standard",
+      "name": "Standard — USPS Ground Advantage",
+      "amountUsd": 6.95,
+      "minDays": 3,
+      "maxDays": 7,
+      "freeOverThreshold": true
+    },
+    {
+      "id": "priority",
+      "name": "Priority",
+      "amountUsd": 12.95,
+      "minDays": 1,
+      "maxDays": 3,
+      "freeOverThreshold": false
+    }
+  ]
+}
