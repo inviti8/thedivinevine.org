@@ -1,7 +1,10 @@
 # thedivinevine.org
 
 Herbal remedy storefront (teas, tinctures, salves) with consultation booking.
-Astro 5 + Svelte 5 + Tailwind v4 on Cloudflare Pages. The design lives in [`docs/DESIGN.md`](docs/DESIGN.md).
+Astro 5 + Svelte 5 + Tailwind v4 on Cloudflare Pages.
+
+- **New here / running it locally?** Start with [`docs/RUNBOOK.md`](docs/RUNBOOK.md).
+- Design and decisions: [`docs/DESIGN.md`](docs/DESIGN.md).
 
 ## Run
 
