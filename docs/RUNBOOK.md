@@ -148,5 +148,6 @@ or send over the edited files.
 | Newsletter / contact form | Not built yet |
 | Animated art | Not built yet |
 
-No accounts, keys or `.env` file are needed yet. Once payments and email are added, this runbook will explain
+No accounts or keys are needed yet. `npm run dev` also sets up a small local database the first time
+(in the hidden `.wrangler` folder); that's automatic. Once payments and email are added, this runbook will explain
 how to set up test keys.

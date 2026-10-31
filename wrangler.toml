@@ -7,3 +7,13 @@ name = "thedivinevine"
 compatibility_date = "2025-09-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist"
+
+# D1 (orders, bookings, newsletter). Locally this is a SQLite file under
+# .wrangler/state, created by `npm run db:migrate` (also run by `npm run dev`).
+# Replace database_id with the real one from `wrangler d1 create thedivinevine`
+# before the first deploy.
+[[d1_databases]]
+binding = "DB"
+database_name = "thedivinevine"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"

@@ -388,7 +388,7 @@ Cloudflare Pages has no scheduled handlers, so a tiny separate Worker (`workers/
   - email validation;
   - dedupe;
   - owner alert.
-- `subscribers(email UNIQUE, status: pending|confirmed|unsubscribed, token, created_at, confirmed_at)`.
+- `subscribers(email UNIQUE, status: pending|confirmed|unsubscribed, created_at, confirmed_at)`. Confirm and unsubscribe links are signed tokens (`src/lib/tokens.ts`), so no token is stored.
 - **Double opt-in**: a confirm link via Mailtrap. Every mailing carries an unsubscribe link (`/api/newsletter/unsubscribe?t=`).
 - Actually sending newsletters is out of scope for v1. Later: Mailtrap's bulk stream or an export.
 
@@ -472,3 +472,5 @@ Guard: in dev, refuse any key that isn't `sk_test_`. This is heavymeta's guard.
 | 2026-09-27 | Art layer ships with a placeholder adapter; the SkelForm adapter is a stub until sample art exists. |
 | 2026-09-27 | Site is built for the owner (the user's sister). |
 | 2026-09-27 | Brand is The Divine Vine; the domain is `thedivinevine.org`. |
+| 2026-10-30 | Build order changed: commerce, contact/newsletter and booking before the art layer (see `PLAN.md`). |
+| 2026-10-30 | Local secrets live in `.dev.vars` (read by both `astro dev` and `wrangler pages dev`); Vitest for unit tests. |

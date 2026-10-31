@@ -5,13 +5,15 @@ Astro 5 + Svelte 5 + Tailwind v4 on Cloudflare Pages.
 
 - **New here / running it locally?** Start with [`docs/RUNBOOK.md`](docs/RUNBOOK.md).
 - Design and decisions: [`docs/DESIGN.md`](docs/DESIGN.md).
+- Build plan and progress: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## Run
 
 ```bash
 npm install
-cp .env.example .env
-npm run dev        # http://localhost:4321
+cp .dev.vars.example .dev.vars   # optional: local secrets (Stripe test key, Mailtrap, …)
+npm run dev        # applies local DB migrations, then http://localhost:4321
+npm test           # unit tests (vitest)
 npm run check      # type-check (astro check)
 npm run build      # static build to dist/
 npm run preview    # build + wrangler pages dev (Workers runtime)
@@ -28,6 +30,8 @@ npm run preview    # build + wrangler pages dev (Workers runtime)
 | Shipping rates, free-shipping threshold | `src/data/shop.json` |
 | Colors and fonts | `src/styles/global.css` (`@theme`) |
 | Product photos | `public/images/products/` |
+| Database schema (D1) | `migrations/*.sql` (add a new numbered file; never edit an applied one) |
+| Server helpers (settings, signed links, email) | `src/lib/env.ts`, `tokens.ts`, `email.ts` |
 
 The JSON config files are validated at build time (`src/lib/site-config.ts`), so a typo fails the build.
 
@@ -38,9 +42,4 @@ Copy an existing file in `src/content/products/`. The file name becomes the URL 
 
 ## Status
 
-- [x] Phase 1: scaffold (layout, content, pages, cart drawer)
-- [ ] Phase 2: art layer
-- [ ] Phase 3: checkout (Stripe + D1 orders + Mailtrap)
-- [ ] Phase 4: booking
-- [ ] Phase 5: newsletter and contact form
-- [ ] Phase 6: launch (see DESIGN.md §11)
+See [`docs/PLAN.md`](docs/PLAN.md).
