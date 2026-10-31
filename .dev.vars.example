@@ -5,7 +5,9 @@
 
 PUBLIC_SITE_URL=http://localhost:4321
 
-# Stripe (milestone B) — dev refuses anything but sk_test_ keys
+# Stripe — a test-mode key from a Stripe sandbox. A restricted key (rk_test_…) with
+# Checkout Sessions: Write is preferred; sk_test_… also works. Dev refuses live keys.
+# STRIPE_WEBHOOK_SECRET is the whsec_… printed by `stripe listen` (see docs/RUNBOOK.md).
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 

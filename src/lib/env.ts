@@ -45,8 +45,9 @@ export function parseEnv(raw: RuntimeEnv, { dev }: { dev: boolean }): ServerEnv 
   const signingSecret = blank(raw.SIGNING_SECRET);
 
   // heavymeta's guard: a dev or debug run must never touch live money.
-  if ((dev || debug) && stripeSecretKey && !stripeSecretKey.startsWith('sk_test_')) {
-    throw new ConfigError('Dev/DEBUG requires a Stripe test key (sk_test_…)');
+  // Restricted keys (rk_…) are preferred over secret keys (sk_…).
+  if ((dev || debug) && stripeSecretKey && !/^(rk|sk)_test_/.test(stripeSecretKey)) {
+    throw new ConfigError('Dev/DEBUG requires a Stripe test key (rk_test_… or sk_test_…)');
   }
   if (signingSecret && signingSecret.length < 32) {
     throw new ConfigError('SIGNING_SECRET must be at least 32 characters');

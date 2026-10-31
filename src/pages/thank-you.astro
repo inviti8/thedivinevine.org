@@ -4,13 +4,21 @@ import Base from '~/layouts/Base.astro';
 
 <Base title="Thank You">
   <section class="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-    <p class="eyebrow">Order received</p>
-    <h1 class="mt-2">Thank you!</h1>
+    <p class="eyebrow" id="ty-eyebrow">Order received</p>
+    <h1 class="mt-2" id="ty-heading">Thank you!</h1>
     <hr class="rule" />
-    <!-- Phase 3: verify session_id via /api/order and show the order summary (DESIGN.md §6). -->
-    <p class="text-lg text-parchment-dim italic">
+    <p class="text-lg text-parchment-dim italic" id="ty-message">
       A confirmation is on its way to your inbox. Your remedies will ship within three business days.
     </p>
+
+    <div id="ty-summary" class="parchment mt-10 p-6 text-left sm:p-8" hidden>
+      <p class="eyebrow">Order <span id="ty-ref"></span></p>
+      <table class="mt-4 w-full text-base">
+        <tbody id="ty-items"></tbody>
+        <tfoot id="ty-totals"></tfoot>
+      </table>
+    </div>
+
     <a href="/shop" class="btn mt-8">Continue shopping</a>
   </section>
 </Base>
@@ -18,7 +26,80 @@ import Base from '~/layouts/Base.astro';
 <script>
   import { clearCart } from '~/lib/cart';
 
-  document.addEventListener('astro:page-load', () => {
-    if (location.pathname.startsWith('/thank-you')) clearCart();
-  });
+  interface OrderSummary {
+    status: 'paid' | 'processing' | 'unpaid';
+    reference: string;
+    items: { name: string; quantity: number; amountCents: number }[];
+    subtotalCents: number;
+    shippingCents: number | null;
+    totalCents: number | null;
+    email: string | null;
+  }
+
+  const usd = (cents: number) => (cents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+  function row(label: string, amount: string, cls = '') {
+    const tr = document.createElement('tr');
+    tr.className = cls;
+    const a = document.createElement('td');
+    const b = document.createElement('td');
+    a.className = 'py-1.5';
+    b.className = 'py-1.5 text-right';
+    a.textContent = label;
+    b.textContent = amount;
+    tr.append(a, b);
+    return tr;
+  }
+
+  function setText(id: string, text: string) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  async function showOrder() {
+    if (!location.pathname.startsWith('/thank-you')) return;
+    const sessionId = new URLSearchParams(location.search).get('session_id');
+    if (!sessionId) return;
+
+    let order: OrderSummary;
+    try {
+      const res = await fetch(`/api/order?session_id=${encodeURIComponent(sessionId)}`);
+      if (!res.ok) return; // keep the generic message
+      order = await res.json();
+    } catch {
+      return;
+    }
+
+    if (order.status === 'unpaid') {
+      setText('ty-eyebrow', 'Payment not received');
+      setText('ty-heading', 'Your order is not complete');
+      setText('ty-message', 'We didn’t receive payment for this order, so nothing was charged. Your basket is still saved.');
+      return;
+    }
+
+    clearCart();
+    setText('ty-eyebrow', order.status === 'paid' ? 'Order confirmed' : 'Payment processing');
+    setText(
+      'ty-message',
+      order.status === 'paid'
+        ? `A confirmation is on its way to ${order.email ?? 'your inbox'}. Your remedies will ship within three business days.`
+        : 'Your payment is still processing. We’ll email you as soon as it clears, then ship within three business days.'
+    );
+    setText('ty-ref', `#${order.reference}`);
+
+    const items = document.getElementById('ty-items')!;
+    items.replaceChildren(
+      ...order.items.map((i) => row(`${i.name} × ${i.quantity}`, usd(i.amountCents), 'border-b border-ink/15'))
+    );
+    const totals = [row('Subtotal', usd(order.subtotalCents))];
+    if (order.shippingCents !== null) totals.push(row('Shipping', usd(order.shippingCents)));
+    // Tax is off (DESIGN.md §9), so anything missing from the total is a promotion code.
+    const discount = order.subtotalCents + (order.shippingCents ?? 0) - (order.totalCents ?? 0);
+    if (order.totalCents !== null && discount > 0) totals.push(row('Discount', `−${usd(discount)}`));
+    if (order.totalCents !== null) totals.push(row('Total', usd(order.totalCents), 'font-bold'));
+    document.getElementById('ty-totals')!.replaceChildren(...totals);
+    document.getElementById('ty-summary')!.hidden = false;
+  }
+
+  document.addEventListener('astro:page-load', showOrder);
 </script>

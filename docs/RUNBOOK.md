@@ -143,11 +143,36 @@ or send over the edited files.
 | Feature | Status |
 |---|---|
 | Browsing pages, shop, products, basket, journal | Works |
-| Checkout button | Shows "Checkout unavailable" (payment isn't built yet) |
+| Checkout button | Says checkout is unavailable until Stripe test keys are set up (§9) |
 | Booking calendar | Not built yet; the page lists the consultation types |
 | Newsletter / contact form | Not built yet |
 | Animated art | Not built yet |
 
-No accounts or keys are needed yet. `npm run dev` also sets up a small local database the first time
-(in the hidden `.wrangler` folder); that's automatic. Once payments and email are added, this runbook will explain
-how to set up test keys.
+No accounts or keys are needed to browse and edit. `npm run dev` also sets up a small local database the
+first time (in the hidden `.wrangler` folder); that's automatic. To try real test payments, see §9.
+
+## 9. Testing payments (optional, for developers)
+
+Payments use Stripe in **test mode**: fake cards, no real money. The site refuses live keys while running locally.
+
+1. Install the [Stripe CLI](https://docs.stripe.com/stripe-cli) and sign in with `stripe login`. With no Stripe
+   account yet, `stripe sandbox create` makes a throwaway test environment with its own keys.
+2. In the Stripe Dashboard (test mode / sandbox), create a **restricted key** with *Checkout Sessions: Write*
+   (or use the secret test key).
+3. Copy `.dev.vars.example` to `.dev.vars` and set `STRIPE_SECRET_KEY` to that key.
+4. In a second terminal, forward Stripe's events to your computer and leave it running:
+
+   ```bash
+   stripe listen --forward-to localhost:4321/api/webhook
+   ```
+
+   It prints a `whsec_…` secret. Put it in `.dev.vars` as `STRIPE_WEBHOOK_SECRET`, then restart `npm run dev`.
+5. Add something to the basket, check out, and pay with card **4242 4242 4242 4242**, any future date, any CVC
+   and any ZIP code.
+
+The thank-you page shows the order summary. Emails aren't sent locally: the terminal running `npm run dev` prints
+an `[email:debug]` line for each one instead. To look at stored orders:
+
+```bash
+npx wrangler d1 execute thedivinevine --local --command "SELECT id, status, total_cents, email FROM orders"
+```

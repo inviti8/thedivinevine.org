@@ -34,6 +34,8 @@ describe('parseEnv', () => {
     expect(() => parseEnv({ DB, STRIPE_SECRET_KEY: 'sk_live_x', DEBUG: 'true' }, { dev: false })).toThrow(ConfigError);
     expect(parseEnv({ DB, STRIPE_SECRET_KEY: 'sk_live_x' }, { dev: false }).stripeSecretKey).toBe('sk_live_x');
     expect(parseEnv({ DB, STRIPE_SECRET_KEY: 'sk_test_x' }, { dev: true }).stripeSecretKey).toBe('sk_test_x');
+    expect(parseEnv({ DB, STRIPE_SECRET_KEY: 'rk_test_x' }, { dev: true }).stripeSecretKey).toBe('rk_test_x');
+    expect(() => parseEnv({ DB, STRIPE_SECRET_KEY: 'rk_live_x' }, { dev: true })).toThrow(ConfigError);
   });
 
   it('requires a long signing secret', () => {

@@ -23,6 +23,7 @@
     "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.0.0",
     "nanostores": "^0.11.0",
+    "stripe": "^23.1.0",
     "svelte": "^5.0.0",
     "tailwindcss": "^4.0.0"
   },

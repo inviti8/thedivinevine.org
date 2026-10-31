@@ -34,6 +34,25 @@ const ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;'
 /** Escape a value for HTML text or a quoted attribute. */
 export const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => ESCAPES[c]);
 
+/**
+ * Shared email shell: a parchment card with inline styles (email clients ignore
+ * stylesheets). `body` is trusted HTML: escape every interpolated value with esc().
+ */
+export function emailLayout({ heading, body, preheader = '' }: { heading: string; body: string; preheader?: string }) {
+  return `<!doctype html>
+<html><body style="margin:0;padding:24px 12px;background:#1c1020;font-family:Georgia,'Times New Roman',serif;color:#1d1712">
+<span style="display:none;max-height:0;overflow:hidden">${esc(preheader)}</span>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#efe3c6;border:1px solid #c9a24b">
+<tr><td style="padding:28px 28px 8px;text-align:center">
+<p style="margin:0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#3f4a30">The Divine Vine</p>
+<h1 style="margin:8px 0 0;font-size:24px;font-weight:normal;color:#3a1d3f">${esc(heading)}</h1>
+<hr style="border:0;border-top:1px solid #c9a24b;margin:20px auto 0;width:80px">
+</td></tr>
+<tr><td style="padding:16px 28px 28px;font-size:16px;line-height:1.55">${body}</td></tr>
+</table>
+</body></html>`;
+}
+
 function toBase64(content: string | Uint8Array): string {
   const bytes = typeof content === 'string' ? new TextEncoder().encode(content) : content;
   let bin = '';

@@ -24,18 +24,21 @@ Last updated: 2026-10-30.
 
 ## B. Checkout (DESIGN.md §6)
 
-- [ ] Add the `stripe` SDK; shared `createCheckoutSession` helper (also used by booking)
-- [ ] `POST /api/checkout`: `{ slug, quantity }[]` only → re-price from MDX, reject unknown/out-of-stock,
-  cap quantity, pre-create the `awaiting_payment` order, shipping options from `shop.json`
-- [ ] `POST /api/webhook`: verify signature, dedupe, atomic `paid` transition, store shipping, dispatch by
-  `metadata.kind`; also handle `checkout.session.expired`
-- [ ] Order emails: buyer confirmation + owner notification
-- [ ] `GET /api/order?session_id=` and a verified `/thank-you` summary that clears the cart
-- [ ] Wire `CartDrawer` to the real endpoint; test end-to-end with the Stripe CLI (`stripe listen`)
+- [x] `stripe` SDK (v23, Workers build); `src/lib/stripe.ts` session helper + `completeOrder` (shared with
+  the thank-you fallback)
+- [x] `POST /api/checkout`: `{ slug, quantity }[]` only → re-price from MDX, reject unknown/out-of-stock,
+  cap quantity, pre-create the `awaiting_payment` order, shipping options from `shop.json` (free ≥ threshold)
+- [x] `POST /api/webhook`: verify signature, dedupe, atomic `paid` transition, store shipping, dispatch by
+  `metadata.kind`; `async_payment_succeeded/failed` and `expired` handled
+- [x] Order emails: buyer confirmation + owner notification (with a Stripe Dashboard link)
+- [x] `GET /api/order?session_id=` and a verified `/thank-you` summary; the cart clears only once paid
+- [x] Cart drawer shows server messages; client cart capped at `maxQuantityPerItem`
+- [x] Tests: pricing, shipping, order transitions (in-memory D1 over `node:sqlite`), webhook end to end
+- [ ] **Needs a Stripe test key:** a real test purchase via `stripe listen` (RUNBOOK §9)
 
 ## C. Contact + newsletter (DESIGN.md §8)
 
-- [ ] Rate-limit helper over the `rate_limits` table; honeypot + email validation helpers
+- [ ] Rate-limit helper over the `rate_limits` table (also apply to `/api/checkout`); honeypot + email validation helpers
 - [ ] `POST /api/contact` → owner email with reply-to = sender; form on `/contact`
 - [ ] Newsletter: subscribe (double opt-in email), confirm and unsubscribe via signed links, owner alert;
   landing-page form as a Svelte island
@@ -61,7 +64,8 @@ Last updated: 2026-10-30.
 
 - [ ] Cloudflare Pages project + D1 (`wrangler d1 create`, real `database_id`, `npm run db:migrate:remote`)
 - [ ] Secrets in Pages; Email Routing aliases; Mailtrap sending domain (DKIM, merged SPF, DMARC)
-- [ ] Stripe live account + webhook endpoint
+- [ ] Stripe live account + webhook endpoint (`/api/webhook`, the four `checkout.session.*` events) and a
+  restricted live key
 - [ ] SEO/OG images, legal page review, real products and photos
 - [ ] QA on the owner's iPhone
 

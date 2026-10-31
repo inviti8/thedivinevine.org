@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { cart, removeFromCart, updateQuantity, cartSubtotal, type CartItem } from '~/lib/cart';
+  import { cart, removeFromCart, updateQuantity, cartSubtotal, MAX_QUANTITY, type CartItem } from '~/lib/cart';
 
   let open = $state(false);
   let items = $state<CartItem[]>([]);
@@ -21,6 +21,7 @@
   });
 
   const subtotal = $derived(cartSubtotal(items));
+  const UNAVAILABLE = 'Checkout is temporarily unavailable. Please try again shortly.';
   const usd = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
   async function checkout() {
@@ -35,10 +36,10 @@
         body: JSON.stringify({ items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })) }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.url) throw new Error(data.error || 'Checkout unavailable');
+      if (!res.ok || !data.url) throw new Error(data.error || UNAVAILABLE);
       window.location.href = data.url;
     } catch (err) {
-      error = err instanceof Error ? err.message : 'Checkout unavailable';
+      error = err instanceof Error && err.message !== 'Failed to fetch' ? err.message : UNAVAILABLE;
       loading = false;
     }
   }
@@ -70,7 +71,7 @@
               <div class="mt-2 flex items-center gap-2 text-sm">
                 <button onclick={() => updateQuantity(item.slug, item.quantity - 1)} class="border border-gilt/40 px-2" aria-label="Decrease quantity">−</button>
                 <span>{item.quantity}</span>
-                <button onclick={() => updateQuantity(item.slug, item.quantity + 1)} class="border border-gilt/40 px-2" aria-label="Increase quantity">+</button>
+                <button onclick={() => updateQuantity(item.slug, item.quantity + 1)} disabled={item.quantity >= MAX_QUANTITY} class="border border-gilt/40 px-2 disabled:opacity-40" aria-label="Increase quantity">+</button>
                 <button onclick={() => removeFromCart(item.slug)} class="ml-auto text-xs text-mauve hover:text-parchment">Remove</button>
               </div>
             </div>
@@ -87,7 +88,7 @@
         </div>
         <p class="text-xs text-parchment-dim">Shipping calculated at checkout.</p>
         {#if error}
-          <p class="text-sm text-mauve" role="alert">{error}. Please try again shortly.</p>
+          <p class="text-sm text-mauve" role="alert">{error}</p>
         {/if}
         <button onclick={checkout} disabled={loading} class="btn btn-primary w-full">
           {loading ? 'Preparing…' : 'Checkout'}
